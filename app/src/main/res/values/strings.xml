@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">NewsApp</string>
+    <string name="message_about_mistake">Error occurred</string>
+    <string name="bookMarks">Bookmarks</string>
+    <string name="articles">Articles</string>
+    <string name="open_in_browser">Open in browser</string>
+    <string name="add_in_bookmarks"> Bookmark page </string>
+    <string name="delete_from_bookmarks">Delete page from a list of bookmarks</string>
+    <string name="cancel">Cancel</string>
+</resources>
