@@ -62,4 +62,5 @@ public class AdapterOfBookmarks extends RecyclerView.Adapter <AdapterOfBookmarks
         bookMarks = listOfBookmarks;
         notifyDataSetChanged();
     }
+
 }

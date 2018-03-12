@@ -34,7 +34,6 @@ public class AdapterOfArticles extends RecyclerView.Adapter<AdapterOfArticles.Ne
 
     public static class NewViewHolder extends RecyclerView.ViewHolder {
         TextView title;
-        TextView date;
         ImageView image;
 
         public NewViewHolder(View viewItem, final OnItemClickListener listener) {

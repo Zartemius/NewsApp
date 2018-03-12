@@ -1,5 +1,6 @@
 package com.example.artem.newsapp;
 
+import android.app.DialogFragment;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -13,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    SectionsPagerAdapter mAdapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,12 +38,14 @@ public class MainActivity extends AppCompatActivity {
 
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        SectionsPagerAdapter mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(mAdapter);
     }
+
 }
 
 

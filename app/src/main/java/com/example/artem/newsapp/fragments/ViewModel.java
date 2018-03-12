@@ -14,18 +14,12 @@ import java.util.List;
 
 public class ViewModel extends AndroidViewModel {
     private AppDataBase appDataBase;
-    private List<Article> listOfArticles = new ArrayList<>();
     private final LiveData<List<BookMark>> listOfBookMarks;
 
     public ViewModel(Application application){
         super(application);
         appDataBase = AppDataBase.getDatabase(this.getApplication());
         listOfBookMarks = appDataBase.bookMarkDao().getAll();
-    }
-
-    public List<Article> getListOfArticles(){
-        new getListOfArticlesAsyncTask(appDataBase).execute();
-        return listOfArticles;
     }
 
     public LiveData<List<BookMark>> getListOfBookMarks(){
@@ -41,29 +35,16 @@ public class ViewModel extends AndroidViewModel {
 
 
     public void addBookMarkInAList(BookMark bookMark){
-        new addBookMarkAsynkTask(appDataBase,bookMark).execute();
+        new AddBookMarkAsynkTask(appDataBase,bookMark).execute();
     }
 
-    private class getListOfArticlesAsyncTask extends AsyncTask<Void,Void,List<Article>>{
-        private AppDataBase db;
 
-        getListOfArticlesAsyncTask(AppDataBase appDataBase){
-            db = appDataBase;
-        }
-
-        @Override
-        protected List<Article> doInBackground(Void... voids) {
-            listOfArticles = db.articleDao().getAll();
-            return listOfArticles;
-        }
-    }
-
-    private static class addBookMarkAsynkTask extends AsyncTask<Void,Void,Void>{
+    private static class AddBookMarkAsynkTask extends AsyncTask<Void,Void,Void>{
 
         private AppDataBase db;
         private BookMark bookMark;
 
-        addBookMarkAsynkTask(AppDataBase appDataBase, BookMark bookMark){
+        AddBookMarkAsynkTask(AppDataBase appDataBase, BookMark bookMark){
             db = appDataBase;
             this.bookMark = bookMark;
         }

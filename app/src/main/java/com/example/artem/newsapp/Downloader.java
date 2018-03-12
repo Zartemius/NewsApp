@@ -1,8 +1,6 @@
 package com.example.artem.newsapp;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.support.v4.widget.SwipeRefreshLayout;
 import com.example.artem.newsapp.dataBase.AppDataBase;
 import com.example.artem.newsapp.dataBase.Article;
 import org.w3c.dom.Document;
@@ -14,44 +12,19 @@ import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-public class Downloader extends AsyncTask<Void,Void,Void> {
+public class Downloader  {
 
     private Context context;
-    private String firstResource = "http://feeds.feedburner.com/TechCrunch/";
-    private String secondResource = "https://lifehacker.com/rss";
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private AppDataBase appDataBase = AppDataBase.getDatabase(context);
+    private AppDataBase appDataBase;
     private URL url;
 
-
-    public Downloader(Context context,SwipeRefreshLayout swipeRefreshLayout){
+    public Downloader(Context context){
         this.context = context;
-        this.swipeRefreshLayout = swipeRefreshLayout;
+        appDataBase = AppDataBase.getDatabase(context);
     }
 
-    @Override
-    protected void onPreExecute() {
-        swipeRefreshLayout.setRefreshing(true);
-        super.onPreExecute();
-
-    }
-
-    @Override
-    protected Void doInBackground(Void... params) {
-        appDataBase.articleDao().clearListOfArticles();
-        ProcessXml(GetData(firstResource),firstResource);
-        ProcessXml(GetData(secondResource),secondResource);
-
-        return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void avoid) {
-        swipeRefreshLayout.setRefreshing(false);
-        super.onPostExecute(avoid);
-    }
-
-    private void ProcessXml(Document data,String urlOfResource){
+    public void ProcessXml(String urlOfResource){
+        Document data = GetData(urlOfResource);
         if(data !=null){
             if(urlOfResource.equals( "https://lifehacker.com/rss")) {
                 org.w3c.dom.Element root = data.getDocumentElement();
@@ -111,7 +84,7 @@ public class Downloader extends AsyncTask<Void,Void,Void> {
         }
     }
 
-    public Document GetData(String urlOfResource){
+    private Document GetData(String urlOfResource){
         try{
             url = new URL(urlOfResource);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
