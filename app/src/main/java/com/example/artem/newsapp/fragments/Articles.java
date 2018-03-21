@@ -45,6 +45,7 @@ public class Articles extends Fragment implements Observer {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         viewModel = new ViewModel(getActivity().getApplication());
+        new GetListOfArticlesAsyncTask().execute();
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
             @Override

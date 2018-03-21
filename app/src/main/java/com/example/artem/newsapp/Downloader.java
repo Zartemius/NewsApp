@@ -6,11 +6,19 @@ import com.example.artem.newsapp.dataBase.Article;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class Downloader  {
 
@@ -85,16 +93,22 @@ public class Downloader  {
     }
 
     private Document GetData(String urlOfResource){
+
+        OkHttpClient client = new OkHttpClient();
+
         try{
             url = new URL(urlOfResource);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            InputStream inputStream = connection.getInputStream();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            Response response = client.newCall(request).execute();
+            InputStream is = response.body().byteStream();
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = builderFactory.newDocumentBuilder();
-            Document xmlDoc = builder.parse(inputStream);
+            DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
+            Document xmlDoc = documentBuilder.parse(is);
             return xmlDoc;
-        } catch (Exception e){
+
+        }catch (IOException|ParserConfigurationException|SAXException e){
             e.printStackTrace();
             return null;
         }
