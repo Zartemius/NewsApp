@@ -1,44 +1,28 @@
 package com.example.artem.newsapp.dialogFragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.artem.newsapp.Downloader;
+import com.example.artem.newsapp.MainActivity;
 import com.example.artem.newsapp.R;
 import com.example.artem.newsapp.dataBase.BookMark;
 import com.example.artem.newsapp.fragments.ViewModel;
-import com.example.artem.newsapp.observer_and_subject.Observer;
-import com.example.artem.newsapp.observer_and_subject.Subject;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class MyDialogFragment extends DialogFragment implements Subject {
-
+public class MyDialogFragment extends DialogFragment{
 
     private String urlForImage;
     private String titleText;
     private String linkName;
     private ViewModel viewModel;
-    private ArrayList <Observer> observers;
-    private boolean isClicked;
-
-    public MyDialogFragment(){
-        observers = new ArrayList<Observer>();
-        isClicked = false;
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -81,25 +65,6 @@ public class MyDialogFragment extends DialogFragment implements Subject {
     }
 
 
-    @Override
-    public void register(final Observer observer){
-        if(!observers.contains(observer)){
-            observers.add(observer);
-        }
-    }
-
-    @Override
-    public void unregister(final Observer observer){
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers(){
-        for (final Observer observer : observers){
-            observer.updated(isClicked);
-        }
-    }
-
     public class OnButtonForOpeningLinkClicked implements View.OnClickListener{
         @Override
         public void onClick(View view) {
@@ -112,17 +77,15 @@ public class MyDialogFragment extends DialogFragment implements Subject {
     public class OnButtonAddToBookMarksClicked implements View.OnClickListener{
         @Override
         public void onClick(View view) {
-            isClicked = true;
+            boolean isClicked = true;
             BookMark bookMark = new BookMark();
             bookMark.setTitleOfBookMarkedPage(titleText);
             bookMark.setThumbnailUrlOfBookMarkedPage(urlForImage);
             viewModel.addBookMarkInAList(bookMark);
-            notifyObservers();
-
-            Toast toast = Toast.makeText(getActivity(), "Page is bookmarked",
-                    Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.TOP,0,0);
-            toast.show();
+            ((MainActivity) getActivity())
+                    .bus()
+                    .send(isClicked);
+            dismiss();
         }
     }
 
@@ -136,8 +99,13 @@ public class MyDialogFragment extends DialogFragment implements Subject {
     public class OnButtonDeleteBookmarkClicked implements View.OnClickListener{
         @Override
         public void onClick(View view) {
+            boolean isClicked = false;
             String title = titleText;
             viewModel.findAndDeleteBookmark(title);
+            ((MainActivity) getActivity())
+                    .bus()
+                    .send(isClicked);
+            dismiss();
         }
     }
 

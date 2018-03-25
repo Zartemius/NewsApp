@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import com.example.artem.newsapp.fragments.Articles;
 import com.example.artem.newsapp.fragments.Bookmarks;
-import com.example.artem.newsapp.observer_and_subject.Subject;
 
 public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

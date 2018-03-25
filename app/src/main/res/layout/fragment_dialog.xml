@@ -9,7 +9,7 @@
     <ImageView
         android:id="@+id/fragment_dialog__image"
         android:layout_width="240dp"
-        android:layout_height="240dp"
+        android:layout_height="190dp"
         android:src="@drawable/placeholder" />
 
     <TextView
@@ -19,13 +19,13 @@
         android:textSize="18sp"
         android:gravity="center"
         android:textColor="@color/black"
-        android:layout_marginBottom="5dp"/>
+        android:layout_marginBottom="10dp"/>
 
     <Button
         android:id="@+id/fragment_dialog__open_in_browser"
         android:layout_width="230dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/open_in_browser"
         android:background="@color/blue"
         android:textColor="@color/white"/>
@@ -34,7 +34,7 @@
         android:id="@+id/fragment_dialog__add_in_bookmarks"
         android:layout_width="230dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/add_in_bookmarks"
         android:background="@color/blue"
         android:textColor="@color/white"/>
@@ -43,7 +43,7 @@
         android:id="@+id/fragment_dialog__delete_from_bookmarks"
         android:layout_width="230dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/delete_from_bookmarks"
         android:background="@color/blue"
         android:textColor="@color/white"/>
@@ -52,7 +52,7 @@
         android:id="@+id/fragment_dialog__cancel"
         android:layout_width="230dp"
         android:layout_height="45dp"
-        android:layout_marginBottom="7dp"
+        android:layout_marginBottom="10dp"
         android:text="@string/cancel"
         android:background="@color/blue"
         android:textColor="@color/white"/>

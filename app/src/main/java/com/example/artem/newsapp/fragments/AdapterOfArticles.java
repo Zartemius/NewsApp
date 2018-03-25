@@ -35,11 +35,15 @@ public class AdapterOfArticles extends RecyclerView.Adapter<AdapterOfArticles.Ne
     public static class NewViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView image;
+        TextView date;
+        ImageView bookMark;
 
         public NewViewHolder(View viewItem, final OnItemClickListener listener) {
             super(viewItem);
             title = itemView.findViewById(R.id.item_view_holder__titleTxt);
             image = itemView.findViewById(R.id.item_view_holder__articleImage);
+            date = itemView.findViewById(R.id.item_view_holder__articleDate);
+            bookMark = itemView.findViewById(R.id.item_view_holder__bookMark);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -59,12 +63,22 @@ public class AdapterOfArticles extends RecyclerView.Adapter<AdapterOfArticles.Ne
     public void onBindViewHolder(NewViewHolder holder, int position) {
         Article currentItem = articles.get(position);
 
+        String date = currentItem.getDate();
         String title = currentItem.getTitle();
         String thumbnailUrl = currentItem.getThumbnailUrl();
+        boolean isBookMarked = currentItem.getIsBookmarked();
+        holder.date.setText(date);
         holder.title.setText(title);
         Picasso.with(context)
                  .load(thumbnailUrl)
                  .into(holder.image);
+
+        if(!isBookMarked) {
+            holder.bookMark.setImageResource(R.drawable.bookmark);
+        }else{
+            holder.bookMark.setImageResource(R.drawable.confirmed_bookmark);
+        }
+
     }
 
     @Override
@@ -78,4 +92,7 @@ public class AdapterOfArticles extends RecyclerView.Adapter<AdapterOfArticles.Ne
     public int getItemCount() {
         return articles.size();
     }
+
 }
+
+

@@ -1,6 +1,5 @@
 package com.example.artem.newsapp.fragments;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,24 +8,24 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
-
 import com.example.artem.newsapp.Downloader;
+import com.example.artem.newsapp.MainActivity;
 import com.example.artem.newsapp.R;
 import com.example.artem.newsapp.dataBase.AppDataBase;
 import com.example.artem.newsapp.dataBase.Article;
 import com.example.artem.newsapp.dialogFragment.MyDialogFragment;
-import com.example.artem.newsapp.observer_and_subject.Observer;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import io.reactivex.functions.Consumer;
 
-public class Articles extends Fragment implements Observer {
+import static android.content.ContentValues.TAG;
+
+public class Articles extends Fragment {
 
 
     private static final String FIRST_RESOURCE = "http://feeds.feedburner.com/TechCrunch/";
@@ -37,6 +36,7 @@ public class Articles extends Fragment implements Observer {
     public AdapterOfArticles mAdapter;
     private MyDialogFragment dialogFragment;
     private ViewModel viewModel;
+    private boolean bookmarkIsConfirmed;
 
     @Nullable
     @Override
@@ -58,16 +58,6 @@ public class Articles extends Fragment implements Observer {
         return view;
     }
 
-    @Override
-    public void updated(final boolean isClicked){
-        if(isClicked){
-            Toast toast = Toast.makeText(getActivity(), "Works",
-                    Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.TOP,0,0);
-            toast.show();
-        }
-    }
-
 
     private class GetListOfArticlesAsyncTask extends AsyncTask<Void,Void,Void>{
         private AppDataBase db = AppDataBase.getDatabase(getActivity());
@@ -77,7 +67,7 @@ public class Articles extends Fragment implements Observer {
         @Override
         protected Void doInBackground(Void... voids) {
             db.articleDao().clearListOfArticles();
-            downloader.ProcessXml(FIRST_RESOURCE);
+            //downloader.ProcessXml(FIRST_RESOURCE);
             downloader.ProcessXml(SECOND_RESOURCE);
             articles = db.articleDao().getAll();
             Collections.sort(articles, new ArticlesDateComparator());
@@ -94,18 +84,37 @@ public class Articles extends Fragment implements Observer {
             mAdapter.setOnItemClickListener(new AdapterOfArticles.OnItemClickListener() {
 
                 @Override
-                public void onItemClick(int position) {
-                    Boolean bookMarkIsConfirmed;
+                public void onItemClick(final int position) {
                     String urlForImage = listOfArticles.get(position).getThumbnailUrl();
                     String textOfTitle = listOfArticles.get(position).getTitle();
-                    String link = listOfArticles.get(position).getLink();
+                    final String link = listOfArticles.get(position).getLink();
                     FragmentManager fm = getActivity().getSupportFragmentManager();
                     dialogFragment = new MyDialogFragment();
                     dialogFragment.setImageUrl(urlForImage);
                     dialogFragment.setTitleText(textOfTitle);
                     dialogFragment.setTextOfLink(link);
                     dialogFragment.show(fm,"hi");
-                }
+
+                    ((MainActivity) getActivity())
+                            .bus()
+                            .toObservable()
+                            .subscribe(new Consumer<Boolean>() {
+                                @Override
+                                public void accept(Boolean aBoolean) throws Exception {
+
+                                    if(aBoolean){
+                                        listOfArticles.get(position).setIsBookmarked(aBoolean);
+                                        mAdapter.notifyDataSetChanged();
+                                        Log.i(TAG,"is supposed to be true" + aBoolean + " position" + position);
+                                    }
+                                    else{
+                                        listOfArticles.get(position).setIsBookmarked(aBoolean);
+                                        mAdapter.notifyDataSetChanged();
+                                        Log.i(TAG,"is supposed to be false" + aBoolean + " position" + position);
+                                    }
+                                }
+                            });
+                    }
             });
         }
     }

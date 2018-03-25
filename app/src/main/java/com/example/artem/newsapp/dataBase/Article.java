@@ -12,6 +12,7 @@ public class Article {
     private String date;
     private String link;
     private String thumbnailUrl;
+    private boolean isBookmarked;
 
     public int getPid(){
         return pid;
@@ -51,5 +52,12 @@ public class Article {
 
     public String getThumbnailUrl(){
         return thumbnailUrl;
+    }
+
+    public void setIsBookmarked(boolean isBookmarked){
+        this.isBookmarked = isBookmarked;
+    }
+    public boolean getIsBookmarked(){
+        return isBookmarked;
     }
 }

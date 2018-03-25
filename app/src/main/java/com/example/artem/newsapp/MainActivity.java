@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     SectionsPagerAdapter mAdapter;
+    private RxBus bus;
 
 
     @Override
@@ -39,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        bus = new RxBus();
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -46,6 +48,9 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(mAdapter);
     }
 
+    public RxBus bus(){
+        return bus;
+    }
 }
 
 
