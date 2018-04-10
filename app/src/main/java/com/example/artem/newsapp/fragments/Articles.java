@@ -37,6 +37,7 @@ public class Articles extends Fragment {
     private MyDialogFragment dialogFragment;
     private ViewModel viewModel;
     private boolean bookmarkIsConfirmed;
+    private int mPosition;
 
     @Nullable
     @Override
@@ -85,6 +86,7 @@ public class Articles extends Fragment {
 
                 @Override
                 public void onItemClick(final int position) {
+                    mPosition = position;
                     String urlForImage = listOfArticles.get(position).getThumbnailUrl();
                     String textOfTitle = listOfArticles.get(position).getTitle();
                     final String link = listOfArticles.get(position).getLink();
@@ -94,28 +96,33 @@ public class Articles extends Fragment {
                     dialogFragment.setTitleText(textOfTitle);
                     dialogFragment.setTextOfLink(link);
                     dialogFragment.show(fm,"hi");
-
                     ((MainActivity) getActivity())
                             .bus()
                             .toObservable()
                             .subscribe(new Consumer<Boolean>() {
                                 @Override
                                 public void accept(Boolean aBoolean) throws Exception {
-
+                                    boolean finalResult;
                                     if(aBoolean){
-                                        listOfArticles.get(position).setIsBookmarked(aBoolean);
+                                        setResultThere(aBoolean);
                                         mAdapter.notifyDataSetChanged();
-                                        Log.i(TAG,"is supposed to be true" + aBoolean + " position" + position);
+                                        //Log.i(TAG,"is supposed to be true" + aBoolean + " position" + position);
                                     }
                                     else{
-                                        listOfArticles.get(position).setIsBookmarked(aBoolean);
+                                        setResultThere(aBoolean);
                                         mAdapter.notifyDataSetChanged();
-                                        Log.i(TAG,"is supposed to be false" + aBoolean + " position" + position);
+                                        //Log.i(TAG,"is supposed to be false" + aBoolean + " position" + position);
                                     }
                                 }
+
+
                             });
                     }
             });
         }
+    }
+
+    public void setResultThere(boolean isTrue){
+        listOfArticles.get(mPosition).setIsBookmarked(isTrue);
     }
 }
