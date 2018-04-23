@@ -8,6 +8,7 @@ public class Article {
 
     @PrimaryKey(autoGenerate = true)
     private int pid;
+
     private String title;
     private String date;
     private String link;
@@ -57,7 +58,26 @@ public class Article {
     public void setIsBookmarked(boolean isBookmarked){
         this.isBookmarked = isBookmarked;
     }
+
     public boolean getIsBookmarked(){
         return isBookmarked;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+       if (this == o) return true;
+       if (o == null || getClass() != o.getClass()) return false;
+
+        Article article = (Article) o;
+
+        if (title != null ? !title.equals(article.title) : article.title != null) return false;
+        return link.equals(article.link);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + link.hashCode();
+        return result;
     }
 }

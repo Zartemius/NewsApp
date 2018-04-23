@@ -8,7 +8,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,13 +22,9 @@ import java.util.Collections;
 import java.util.List;
 import io.reactivex.functions.Consumer;
 
-import static android.content.ContentValues.TAG;
-
 public class Articles extends Fragment {
 
-
-    private static final String FIRST_RESOURCE = "http://feeds.feedburner.com/TechCrunch/";
-    private static final String SECOND_RESOURCE = "https://lifehacker.com/rss";
+    private static final String RESOURCE = "https://lifehacker.com/rss";
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Article> listOfArticles;
@@ -38,6 +33,8 @@ public class Articles extends Fragment {
     private ViewModel viewModel;
     private boolean bookmarkIsConfirmed;
     private int mPosition;
+    private Downloader downloader;
+    private AppDataBase db;
 
     @Nullable
     @Override
@@ -46,6 +43,8 @@ public class Articles extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         viewModel = new ViewModel(getActivity().getApplication());
+        downloader = new Downloader(getActivity());
+        db = AppDataBase.getDatabase(getActivity());
         new GetListOfArticlesAsyncTask().execute();
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener()
         {
@@ -59,18 +58,12 @@ public class Articles extends Fragment {
         return view;
     }
 
-
     private class GetListOfArticlesAsyncTask extends AsyncTask<Void,Void,Void>{
-        private AppDataBase db = AppDataBase.getDatabase(getActivity());
         List<Article> articles = new ArrayList<>();
-        Downloader downloader = new Downloader(getActivity());
 
         @Override
         protected Void doInBackground(Void... voids) {
-            db.articleDao().clearListOfArticles();
-            //downloader.ProcessXml(FIRST_RESOURCE);
-            downloader.ProcessXml(SECOND_RESOURCE);
-            articles = db.articleDao().getAll();
+            articles = downloader.getDataFromDataBase(RESOURCE);
             Collections.sort(articles, new ArticlesDateComparator());
             return null;
         }
@@ -124,5 +117,12 @@ public class Articles extends Fragment {
 
     public void setResultThere(boolean isTrue){
         listOfArticles.get(mPosition).setIsBookmarked(isTrue);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                db.articleDao().update(listOfArticles.get(mPosition));
+            }
+        }).start();
     }
 }
